@@ -5,64 +5,55 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 
 
-public class RegistrationTest {
+public class RegistrationTest extends TestBase {
 
     @Test(description = "Registration with valid credential")
     public void RegistrationWithValidCredentials() {
-        File chromeDriver = new File("src/main/resources/chromedriver.exe");
-        ChromeDriverService chromeService = new ChromeDriverService.Builder()
-                .usingDriverExecutable(chromeDriver)
-                .usingAnyFreePort()
-                .build();
 
-        WebDriver driver = new ChromeDriver(chromeService);
+        WebDriverWait wait = new WebDriverWait(driver, 5);
 
         driver.get ("https://udemy.com");
 
-        pause(4000);
 
-        WebElement RegistrationPopUpBtn = driver.findElement(
-                By.xpath("(//button[@class='btn btn-primary'])[1]"));
+        wait.until(ExpectedConditions.elementToBeClickable(regPopupBtnLocator));
+        WebElement registrationPopUpBtn = driver.findElement(regPopupBtnLocator);
+        registrationPopUpBtn.click();
 
-        RegistrationPopUpBtn.click();
 
-        pause(4000);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(loginFieldLocator));
+        WebElement loginField = driver.findElement(loginFieldLocator);
+        loginField.clear();
+        loginField.sendKeys("Vladyslav Kuzko");
 
-        WebElement LoginField = driver.findElement(By.id("id_fullname"));
-        LoginField.clear();
-        LoginField.sendKeys("Vladyslav Kuzko");
+        WebElement emailField = driver.findElement(emailFieldLocator);
+        emailField.clear();
+        emailField.sendKeys("ekhome"+System.currentTimeMillis()+"work16@gmail.com");
 
-        WebElement EmailField = driver.findElement(By.xpath("(//input[@class='form-control'])[3]"));
-        EmailField.clear();
-        EmailField.sendKeys("ekhome"+System.currentTimeMillis()+"work16@gmail.com");
+        WebElement passField = driver.findElement(passFieldLocator);
+        passField.clear();
+        passField.sendKeys("qwerty!@#123");
 
-        WebElement PassField = driver.findElement(By.id("password"));
-        PassField.clear();
-        PassField.sendKeys("qwerty!@#123");
 
-        WebElement RegButton = driver.findElement(By.id("submit-id-submit"));
-        RegButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(regButtonLocator));
+        WebElement regButton = driver.findElement(regButtonLocator);
+        regButton.click();
 
-        pause(4000);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(profileLogoLocator));
+        WebElement profileLogo = driver.findElement(profileLogoLocator);
 
-        WebElement ProfileLogo = driver.findElement(By.xpath("(//div[@class='user-avatar__inner fx-c'])[1]"));
+        profileLogo.click();
 
-        pause(2000);
-
-        ProfileLogo.click();
-
-        pause(4000);
-
-        WebElement profileName = driver.findElement(By.xpath("//hgroup[@class='tooltip-container']"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(profileNameLocator));
+        WebElement profileName = driver.findElement(profileNameLocator);
         Assert.assertEquals(profileName.getText(), "Vladyslav Kuzko");
-
-        driver.quit();
 
     }
 
@@ -73,7 +64,6 @@ public class RegistrationTest {
         } catch (InterruptedException e){
             e.printStackTrace();
         }
-
 
     }
 
